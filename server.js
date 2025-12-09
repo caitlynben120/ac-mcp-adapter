@@ -131,5 +131,4 @@ app.get('/openapi.json', (req, res) => {
     }
   });
 });
-
 app.listen(port, () => console.log(`MCP adapter on :${port}`));
