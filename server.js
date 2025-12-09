@@ -7,6 +7,24 @@ app.use(express.json());
 const { AC_BASE_URL, AC_API_KEY, MCP_AUTH_TOKEN } = process.env;
 
 // Basic auth for GPT → adapter
+app.get('/openapi.json', (req, res) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'ActiveCampaign MCP Adapter',
+      version: '1.0.0',
+      description: 'Temporary OpenAPI schema for GPT Builder compatibility'
+    },
+    paths: {
+      '/get_deals': {
+        post: {
+          summary: 'Fetch recent deals from ActiveCampaign',
+          responses: { 200: { description: 'Successful response' } }
+        }
+      }
+    }
+  });
+});
 app.use((req, res, next) => {
   const auth = req.headers.authorization || "";
   if (!MCP_AUTH_TOKEN || auth !== `Bearer ${MCP_AUTH_TOKEN}`) {
@@ -106,29 +124,4 @@ app.get("/", (_req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-// --- Temporary OpenAPI bridge for GPT Builder ---
-app.get('/openapi.json', (req, res) => {
-  res.json({
-    openapi: '3.1.0',
-    info: {
-      title: 'ActiveCampaign MCP Adapter',
-      version: '1.0.0',
-      description: 'Temporary OpenAPI schema for GPT Builder compatibility'
-    },
-    paths: {
-      '/get_deals': {
-        post: {
-          summary: 'Fetch recent deals from ActiveCampaign',
-          responses: { 200: { description: 'Successful response' } }
-        }
-      },
-      '/search_contacts': {
-        post: {
-          summary: 'Search contacts in ActiveCampaign',
-          responses: { 200: { description: 'Successful response' } }
-        }
-      }
-    }
-  });
-});
 app.listen(port, () => console.log(`MCP adapter on :${port}`));
